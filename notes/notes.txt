@@ -1,0 +1,49 @@
+architecture => paytm FE + BE -> webhook server ->DB 
+the bank server will hit the webhook server about the paytm status , and webhook server will update the DB 
+
+what is a webhook server ? a server that waits for the events from another service and reacts to them automatically 
+it is important to use webhook server as it need to be on all the time 
+
+path to be very catious about when making a paytm related app : 
+1. send money to someone
+2.withdraw balance of merchant 
+3.withdraw balance of user back to bank    
+4. webhook from banks to transfer in money 
+
+stack : 
+FE + BE -> next
+auxilary BE -> express 
+turborepo 
+postgres DB 
+prisma ORM
+tailwindcss
+
+cmd to run postgres on docker
+run postgress on docker : docker run -e POSTGRES_PASSWORD=anshit -d -p 5432:5432 postgres
+
+#On Ramping 
+what is on ramping ?? example of zerodha (app) and hdfc (bank) 
+
+npx prisma db  seed  -> seed.ts  to get some dummy data 
+prisma.user.upsert ->create and if exist update 
+
+
+# const session = await getServerSession(authOptions); why we pass the authoptions here ??
+We pass authOptions to getServerSession so it knows how to configure authentication for your app. The authOptions object contains settings like providers, callbacks, and session handling rules. By passing it, getServerSession knows how to validate the user's session, which authentication providers to use, and how to fetch user data securely. This ensures the session is created and validated according to your app's specific authentication setup.
+
+# session?.user?.id; why does we add question marks here
+The question marks (?.) are called optional chaining. They safely access properties that might not exist.
+
+ACID properties in DBMS  
+1.atomicity -> the entire transaction takes place at once or doesnt happen at all  -> either -200 for you and +200 to reciver or no transaction at all 
+2.consistency -> the database must be consistent  before and after the transaction 
+3. isolation-> Multiple tracations occurs  independenlty without interfrecence
+4. Durability -> the changes of a succesfull transaction occurs even if the system faliure occurs 
+
+
+loacking rows in DB :         await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`;  //raw sql query 
+this means no one can acces this row untill one process or request is complete ,, hence the requests will go sequesntially 
+this will fix the issue of user pressing the send multiple time quickly 
+it is sort of balance protechtion 
+// no need of laocking in mongo db , as it does it automaticllay 
+tyeps of laock in postgres : readonly and writeonly 
